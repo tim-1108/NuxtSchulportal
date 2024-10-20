@@ -18,7 +18,7 @@
             </footer>
         </div>
         <aside class="fixed h-screen w-screen top-0 left-0 z-[200] pointer-events-none" id="overlay-wrapper">
-            <div v-for="[uuid, meta] of flyoutMap">
+            <div v-for="[uuid, meta] of flyoutMap" :key="uuid">
                 <component
                     :is="meta.vnode"
                     :ref="

@@ -11,6 +11,7 @@ const el = useTemplateRef("element");
 const uuid = useRandomUUID();
 
 async function requestClose() {
+    if (isFlyoutDisabled.value) return;
     await closeFlyout();
 }
 
@@ -47,7 +48,7 @@ function getDimensions() {
 
 function closeFlyoutWithEvent(event: TouchEvent) {
     if (isFlyoutDisabled.value) return;
-    if (!(event.target instanceof HTMLElement)) return;
+    if (!(event.target instanceof Element)) return;
     const isInsideFlyout = event.target.closest(`.large-flyout[data-uuid="${uuid}"]`);
     if (isInsideFlyout) return;
     closeFlyout();

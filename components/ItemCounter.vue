@@ -3,9 +3,8 @@
         class="item-counter w-screen justify-center overflow-x-hidden flex"
         @touchstart.passive="startHighlight"
         @touchmove.passive="findHighlightedCounter"
-        @touchend.passive="cancelHighlighting"
-        :selecting="isSelecting">
-        <div class="item-counter-item" v-for="(item, index) of items" :index="index" ref="items">
+        @touchend.passive="cancelHighlighting">
+        <div class="item-counter-item" v-for="(_, index) of items" ref="items">
             <div
                 class="bg-gray-500 rounded-full w-2 h-2 mx-1 my-4"
                 :class="{
@@ -55,7 +54,7 @@ function startHighlight(event: TouchEvent) {
     findHighlightedCounter(event);
 }
 function findHighlightedCounter(event: TouchEvent) {
-    if (!(event.target instanceof HTMLElement)) return cancelHighlighting();
+    if (!(event.target instanceof Element)) return cancelHighlighting();
     const container = event.target.closest<HTMLElement>(".item-counter");
     if (container === null) return cancelHighlighting();
     const position = event.touches[0].clientX;

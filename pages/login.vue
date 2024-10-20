@@ -315,14 +315,14 @@ async function login() {
     useSession().value = data.value?.session;
 
     const card = document.querySelector("#login");
-    if (!(card instanceof HTMLElement)) return;
+    if (!(card instanceof Element)) return;
     await resizeCard(card, { in: ".login-stage[stage='2']", out: ".login-stage[stage='1']" }, () => (state.value = Status.LoginSuccessful));
     // Using this, the auth middleware will recognize that we are, in fact, logged in and thus
     // will redirect us either to / or to the path given in the redirect parameter
     location.reload();
 }
 
-async function resizeCard(element: HTMLElement, content: { in: string; out: string }, trigger: Function) {
+async function resizeCard(element: Element, content: { in: string; out: string }, trigger: Function) {
     element.querySelector(content.out)?.animate(
         {
             opacity: 0
@@ -381,7 +381,7 @@ async function beginReset() {
         sid
     };
     const card = document.querySelector("#reset");
-    if (!(card instanceof HTMLElement)) return;
+    if (!(card instanceof Element)) return;
     await resizeCard(card, { in: ".reset-stage[stage='2']", out: ".reset-stage[stage='1']" }, () => (state.value = Status.ResetCodeVerification));
 }
 
@@ -454,7 +454,7 @@ async function verifyResetCode() {
     const card = document.querySelector("#reset");
     // We cannot risk the password getting lost just because it
     // couldn't find the element (how that would be possible I dunno)
-    if (!(card instanceof HTMLElement)) {
+    if (!(card instanceof Element)) {
         alert(data.value);
         return;
     }

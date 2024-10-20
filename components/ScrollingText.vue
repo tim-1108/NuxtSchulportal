@@ -35,7 +35,7 @@ onMounted(async () => {
     // be existent even before the animation started...
     await sleep(props.startDelay ?? 0);
 
-	if (isUnmounted.value) return;
+    if (isUnmounted.value) return;
 
     if (el.value === null) {
         console.warn("[ScrollingText] Failed to initialize");
@@ -54,8 +54,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-	isUnmounted.value = true;
-})
+    isUnmounted.value = true;
+});
 </script>
 
 <style scoped>

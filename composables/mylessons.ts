@@ -59,7 +59,8 @@ export async function fetchMyLessonsCourse(id: number, semester?: number, overwr
     const token = useToken();
     const key = (await useAESKey()) ?? undefined;
     if (overwrite) courses.value.delete(id);
-    if (courses.value.has(id) && !overwrite) return courses.value.get(id);
+    else if (courses.value.has(id) && !overwrite) return;
+    clearAppError(AppID.MyLessonsCourse);
     try {
         const response = await $fetch("/api/mylessons/course", {
             query: {

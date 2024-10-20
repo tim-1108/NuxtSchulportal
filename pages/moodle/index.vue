@@ -6,7 +6,7 @@
                 <h1 class="text-2xl">Dein Moodle</h1>
                 <ButtonRoundedBlurred class="whitespace-nowrap h-8" :icon="['fas', 'bell']" ref="notifications" @click="toggleNotifications">
                     <font-awesome-icon v-if="hasAppError(AppID.MoodleNotifications)" :icon="['fas', 'triangle-exclamation']"></font-awesome-icon>
-                    <span v-else-if="notifications">{{ notifications.length }}</span>
+                    <span v-else-if="notifications">{{ notCount }}</span>
                     <InfiniteSpinner v-else :size="15"></InfiniteSpinner>
                 </ButtonRoundedBlurred>
             </section>
@@ -45,6 +45,11 @@ import ScrollFader from "~/components/ScrollFader.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import MoodleNotifications from "~/components/overlay/flyouts/MoodleNotifications.vue";
 
+const notifications = useMoodleNotifications();
+const notCount = computed(() => {
+    if (!Array.isArray(notifications.value)) return 0;
+    return notifications.value.filter((item) => !item.read).length;
+});
 const notButton = useTemplateRef("notifications");
 const notFlyout = ref<RegisteredFlyoutMetadata | null>(null);
 async function toggleNotifications() {
@@ -64,8 +69,6 @@ const courses = useMoodleCourses();
 const coursesEl = useTemplateRef("course-list");
 const selCourseType = ref<MoodleCoursesListClassification>("all");
 const selCourses = computed(() => courses.value.get(selCourseType.value));
-
-const notifications = useMoodleNotifications();
 
 onMounted(async () => {
     if (!credentials.value) return;

@@ -8,11 +8,12 @@
             '--horizontal': transformOrigin ? transformOrigin[0] : '',
             '--vertical': transformOrigin ? transformOrigin[1] : ''
         }"
-        @touchstart="handleTouchInputs"
-        @touchmove="handleTouchInputs"
-        @touchend="submitTouchInput"
+        @touchstart.passive="handleTouchInputs"
+        @touchmove.passive="handleTouchInputs"
+        @touchend.passive="submitTouchInput"
         :data-open="isFlyoutDisabled ? null : true"
         :data-closing="isFlyoutClosing ? true : null"
+        :data-uuid="uuid"
         :class="{
             'opacity-0 pointer-events-none': isFlyoutDisabled
         }"
@@ -47,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FlyoutProperties, HorizontalOrigin, RegisteredFlyoutMetadata, SmallFlyoutProperties, VerticalOrigin } from "~/composables/flyout";
+import type { HorizontalOrigin, RegisteredFlyoutMetadata, SmallFlyoutProperties, VerticalOrigin } from "~/composables/flyout";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import type { AnyFunction } from "~/common";
 
@@ -129,7 +130,7 @@ function handleTouchInputs(event: TouchEvent) {
     const touch = event.touches[0];
     if (!touch) return;
     const elFromPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (!(elFromPoint instanceof HTMLElement)) return;
+    if (!(elFromPoint instanceof Element)) return;
 
     const el = elFromPoint.closest("[data-small-flyout-item]");
     if (el === null) {
@@ -163,9 +164,12 @@ onUnmounted(() => {
     window.removeEventListener("touchstart", closeFlyoutWithEvent);
 });
 
+const uuid = useRandomUUID();
 function closeFlyoutWithEvent(event: Event) {
-    const { target } = event;
-    if (!(target instanceof HTMLElement) || target.closest(".flyout")) return;
+    if (isFlyoutDisabled.value) return;
+    if (!(event.target instanceof Element)) return;
+    const isInsideFlyout = event.target.closest(`.small-flyout[data-uuid="${uuid}"]`);
+    if (isInsideFlyout) return;
     closeFlyout();
 }
 

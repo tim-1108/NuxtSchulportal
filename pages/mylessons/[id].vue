@@ -2,10 +2,6 @@
     <div class="h-full py-4">
         <AppErrorDisplay :id="AppID.MyLessonsCourse" v-if="hasAppError(AppID.MyLessonsCourse)"></AppErrorDisplay>
         <div v-else-if="courseData" class="content grid w-screen h-full gap-2">
-            <InfoBox class="w-fit justify-self-center" type="error" v-if="!hasValidAESKeySet()">
-                <span>Anwesenheiten sind nicht verfügbar</span>
-                <ButtonRoundedBlurred @click="() => loadCourse(true)" :icon="['fas', 'arrow-rotate-right']"></ButtonRoundedBlurred>
-            </InfoBox>
             <header class="grid items-center justify-center gap-2 w-screen px-4">
                 <div class="h-12 grid relative w-fit">
                     <NuxtImg class="h-12" src="icons/folder.svg"></NuxtImg>
@@ -64,17 +60,17 @@
 </template>
 
 <script setup lang="ts">
-import type { MyLessonsCourse } from "~/common/mylessons";
 const route = useRoute();
 const courseId = route.params.id as string;
-const courseData = ref<MyLessonsCourse | null>(null);
+const courses = useMyLessonsCourseDetails();
+const courseData = computed(() => courses.value.get(parseInt(courseId)) ?? null);
 /**
- * Only if the user has activly touched the container/screen before the scrollend
+ * Only if the user has actively touched the container/screen before the scrollend
  * event was fired, the card will be scrolled to.
  *
  * This prevents jittering when the event is fired, the closest card is scrolled to
  * and another scrollend event is fired (this sometimes triggers a loop of jittering between
- * two cards that slowly clears but is really ugly).
+ * two cards that slowly clears but is hideous).
  */
 const isTouching = ref(false);
 const NUMBER_PATTERN = /^\d{1,7}$/;
@@ -126,6 +122,7 @@ onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
     isEventHandlerRegistered.value = false;
 });
+
 const isEventHandlerRegistered = ref(false);
 async function handleResize() {
     await useWait(100);
@@ -139,13 +136,7 @@ const selectedSemester = ref(useCurrentSemester());
 async function loadCourse(overwrite?: boolean) {
     clearAppError(AppID.MyLessonsCourse);
     if (!NUMBER_PATTERN.test(courseId)) return createAppError(AppID.MyLessonsCourse, "Ungültige ID", loadCourse);
-
-    const id = parseInt(courseId);
-    const map = useMyLessonsCourseDetails();
-
-    await fetchMyLessonsCourse(id, selectedSemester.value, overwrite);
-    if (hasAppError(AppID.MyLessonsCourse) || !map.value.has(id)) return;
-    courseData.value = map.value.get(id)!;
+    await fetchMyLessonsCourse(parseInt(courseId), selectedSemester.value, overwrite);
 }
 
 const CARD_WIDTH = 288;
