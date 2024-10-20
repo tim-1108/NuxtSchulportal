@@ -14,11 +14,11 @@
                         v-if="icon"
                         :icon="icon"></font-awesome-icon>
                 </div>
-                <div class="fade overflow-hidden px-4">
-                    <ScrollingText :start-delay="3000" font="bold 30px Merriweather" :pixels-per-second="16">
+                <ScrollingText :start-delay="3000" :pixels-per-second="50">
+                    <h1 class="text-3xl">
                         {{ courseData.subject }}
-                    </ScrollingText>
-                </div>
+                    </h1>
+                </ScrollingText>
             </header>
             <main class="min-h-0 grid" ref="main">
                 <div
@@ -235,25 +235,11 @@ async function switchFooterItem(index: number) {
 header {
     grid-template-columns: max-content auto;
 }
-.fade {
-    mask-image: var(--horizontal-fade-mask);
-    max-width: fit-content;
-}
 .content {
     grid-template-rows: auto 1fr;
 }
 main {
     grid-template-rows: 1fr min-content;
-}
-.deck-card[previous],
-.deck-card[next] {
-    transform: scale(90%);
-}
-.deck-card[previous] {
-    transform-origin: center right;
-}
-.deck-card[next] {
-    transform-origin: center left;
 }
 .deck-card {
     @apply h-full max-h-full overflow-y-scroll;

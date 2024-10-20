@@ -243,8 +243,8 @@ code.dark {
 }
 
 table {
-    border-collapse: separate;
-    border-spacing: 0.5rem;
+    border-collapse: separate !important;
+    border-spacing: 0.5rem !important;
     thead {
         --background: var(--table-light-background);
     }
@@ -259,8 +259,8 @@ table {
     td,
     th {
         @apply p-2 rounded-lg;
-        border-collapse: separate;
-        border-spacing: 0.5rem;
+        border-collapse: separate !important;
+        border-spacing: 0.5rem !important;
         background: var(--background);
     }
 }

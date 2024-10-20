@@ -10,14 +10,18 @@
                         class="absolute justify-self-center drop-shadow-sm text-2xl top-7 opacity-70"
                         :icon="icons[index]"></font-awesome-icon>
                 </div>
-                <div class="description grid overflow-x-clip min-w-0 relative w-full">
-                    <ScrollingText font="bold 17px 'Merriweather'" :start-delay="3000">{{ course.subject }}</ScrollingText>
-                    <div v-if="course.last_lesson" class="last-lesson flex gap-2 items-center p-1">
+                <div class="description grid overflow-x-clip min-w-0 w-full">
+                    <ScrollingText :start-delay="3000">
+                        <h1>
+                            {{ course.subject }}
+                        </h1>
+                    </ScrollingText>
+                    <div v-if="course.last_lesson" class="min-w-0 flex gap-2 items-center p-1">
                         <span class="widget blurred-background whitespace-nowrap">{{
                             relativeOrAbsoluteDateFormat(course.last_lesson.date ?? "", "day-month-short")
                         }}</span>
                         <span class="widget bg-red-500" v-if="course.last_lesson.homework && !course.last_lesson.homework.done">HA</span>
-                        <span class="text-xs whitespace-nowrap">{{ course.last_lesson.topic }}</span>
+                        <ScrollingText :start-delay="3000" class="text-xs">{{ course.last_lesson.topic }}</ScrollingText>
                     </div>
                 </div>
             </NuxtLink>
@@ -37,7 +41,7 @@ const icons = computed(() => {
 <style scoped>
 .item {
     grid-template-columns: auto 1fr;
-    transition-property: background transform;
+    transition-property: background, transform;
     transition-duration: 250ms;
 }
 .item:hover:active {
@@ -57,8 +61,5 @@ const icons = computed(() => {
     > *:nth-child(3) {
         grid-area: c;
     }
-}
-.last-lesson {
-    width: calc(100vw - 32px - 76.58px - 8px);
 }
 </style>

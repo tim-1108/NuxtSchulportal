@@ -1,61 +1,81 @@
 <template>
     <div
-        class="scrolling-text whitespace-nowrap relative"
+        class="min-w-0 whitespace-nowrap overflow-hidden"
         ref="element"
         :style="{
-            font,
-            '--length': scrollLength + 'px',
-            '--container-size': containerSize + 'px',
-            '--duration': duration + 'ms',
-            '--animation-delay': startDelay + 'ms'
+            '--margin': MARGIN + 'px',
+            '--text-length': textLength + 'px',
+            '--duration': duration + 'ms'
         }"
         :data-animated="isMoving">
-        <slot />
-        <span class="px-5" v-if="isMoving"></span>
-        <slot v-if="isMoving" />
+        <div class="min-w-0 flex">
+            <slot />
+            <template v-if="isMoving">
+                <div style="min-width: var(--margin)"></div>
+                <slot />
+            </template>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ font?: string; startDelay?: number; pixelsPerSecond?: number }>();
-const scrollLength = ref(0);
-const isMoving = ref(false);
-const containerSize = ref(0);
+const PIXELS_PER_SECOND = 20;
+const MARGIN = 40;
+const props = defineProps<{ startDelay?: number; pixelsPerSecond?: number }>();
+
+const textLength = ref(0);
 const duration = ref(0);
-const MARGIN = 0;
-const PIXELS_PER_SECOND = 8;
-const element = useTemplateRef("element");
+
+const isUnmounted = ref(false);
+const isMoving = ref(false);
+const el = useTemplateRef<HTMLElement>("element");
 onMounted(async () => {
-    if (element.value === null) return;
-    const parent = element.value.parentElement;
-    if (parent == null) return;
-    await useWait(100);
-    const width = measureTextWidth(element.value.innerText, props.font);
-    if (width === null) return;
-    const parentWidth = parent.getBoundingClientRect().width;
-    if (width - MARGIN <= parentWidth) return;
-    // 40 pixels is the width of the spacer element
-    scrollLength.value = -(width - parentWidth + 40);
-    containerSize.value = -parentWidth;
-    duration.value = Math.floor((scrollLength.value / -(props.pixelsPerSecond ?? PIXELS_PER_SECOND)) * 1000);
+    // Instead of using the CSS animation-delay property, we wait here.
+    // If the property was set, the fade at both sides would already
+    // be existent even before the animation started...
+    await sleep(props.startDelay ?? 0);
+
+	if (isUnmounted.value) return;
+
+    if (el.value === null) {
+        console.warn("[ScrollingText] Failed to initialize");
+        return;
+    }
+
+    const { offsetWidth, scrollWidth } = el.value;
+    if (offsetWidth >= scrollWidth) return;
+
+    const pps = props.pixelsPerSecond ?? PIXELS_PER_SECOND;
+
+    // Note that this only describes the length of ONE of the slots
+    textLength.value = scrollWidth;
+    duration.value = Math.floor((scrollWidth + MARGIN) / pps) * 1000;
     isMoving.value = true;
 });
+
+onBeforeUnmount(() => {
+	isUnmounted.value = true;
+})
 </script>
 
 <style scoped>
-.scrolling-text[data-animated="true"] {
-    animation: panning infinite var(--duration) linear;
-    animation-delay: var(--animation-delay);
+[data-animated="true"] {
+    mask-image: var(--horizontal-fade-mask);
+    mask-type: alpha;
+    > div {
+        animation: panning infinite var(--duration) linear;
+    }
 }
 @keyframes panning {
     0% {
-        transform: translateX(0px);
+        transform: translateX(0);
     }
+    /** This causes a snap-back in less than a frame, not visible for the user */
     99.999% {
-        transform: translateX(calc(var(--length) + var(--container-size)));
+        transform: translateX(calc(-1 * (var(--text-length) + var(--margin))));
     }
     100% {
-        transform: translateX(var(--container-size));
+        transform: translateX(0);
     }
 }
 </style>

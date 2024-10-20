@@ -21,10 +21,10 @@
                     </div>
                     <AppErrorDisplay :inlined="true" :id="AppID.MoodleCourseList" v-if="hasAppError(AppID.MoodleCourseList)"></AppErrorDisplay>
                     <div class="grid gap-2 w-full max-w-full" v-else-if="selCourses">
-                        <template v-for="(course, index) of selCourses" :key="course.id">
+                        <template v-for="course of selCourses" :key="course.id">
                             <div class="course-item grid grid-cols-subgrid gap-2 min-w-0">
                                 <div class="course-image h-14 rounded-lg" :style="{ '--background': `url(${proxyMoodleImage(course.image)})` }"></div>
-                                <span class="whitespace-nowrap text-ellipsis overflow-hidden">{{ course.names.short }}</span>
+                                <ScrollingText>{{ course.names.display }}</ScrollingText>
                             </div>
                         </template>
                         <p v-if="!selCourses.length" class="text-center">Keine Kurse</p>

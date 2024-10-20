@@ -2,7 +2,7 @@
 import type { HorizontalOrigin, LargeFlyoutProperties, VerticalOrigin } from "~/composables/flyout";
 import type { AnyFunction } from "~/common";
 
-const FLYOUT_WIDTH = 330;
+const FLYOUT_WIDTH = 300;
 
 const props = defineProps<{ properties: LargeFlyoutProperties }>();
 defineExpose({ getDimensions, inputPosition, inputTransform, requestClose, addCloseListener });
