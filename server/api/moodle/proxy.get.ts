@@ -9,7 +9,7 @@ const querySchema: SchemaEntryConsumer = {
     path: {
         required: true,
         min: 1,
-        max: 100,
+        max: 512,
         pattern: /^\/(theme\/image\.php\/sph\/core\/\d{1,20}\/)|(pluginfile.php\/\d{1,10}\/.{1,100}).{1,50}$/,
         validator_function(key, schema, value: string) {
             return /\.\./gi.test(value);
